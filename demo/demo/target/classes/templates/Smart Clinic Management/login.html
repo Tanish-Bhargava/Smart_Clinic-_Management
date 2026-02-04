@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Clinic Management System - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #198754;
+            --danger-color: #dc3545;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+            --border-color: #dee2e6;
+            --success-color: #198754;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .logo-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-body {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+            background-color: white;
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+            font-size: 14px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            cursor: pointer;
+            color: #666;
+            font-size: 18px;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            color: var(--dark-color);
+            font-weight: 500;
+            user-select: none;
+            margin-bottom: 0;
+        }
+
+        .forgot-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-link:hover {
+            color: #0b5ed7;
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0 20px 0;
+            gap: 15px;
+            color: #adb5bd;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .social-login {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .social-btn {
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark-color);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .social-btn i {
+            font-size: 16px;
+        }
+
+        .signup-link {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #0b5ed7;
+            text-decoration: underline;
+        }
+
+        .alert-message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #664d03;
+            border: 1px solid #ffecb5;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .login-footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .user-role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .role-option {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background-color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .role-option:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+
+        .role-option.active {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .role-option i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 576px) {
+            .login-container {
+                max-width: 100%;
+            }
+
+            .login-header {
+                padding: 30px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .login-body {
+                padding: 25px;
+            }
+
+            .form-label {
+                font-size: 13px;
+            }
+
+            .form-control {
+                font-size: 14px;
+                padding: 10px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header Section -->
+            <div class="login-header">
+                <div class="logo-icon">
+                    <i class="fas fa-clinic-medical"></i>
+                </div>
+                <h1>Smart Clinic</h1>
+                <p>Management System v1.0</p>
+            </div>
+
+            <!-- Login Body -->
+            <div class="login-body">
+                <!-- Alert Messages -->
+                <div class="alert-message alert-success" id="successAlert">
+                    <i class="fas fa-check-circle"></i> Login successful! Redirecting...
+                </div>
+                <div class="alert-message alert-error" id="errorAlert"></div>
+                <div class="alert-message alert-warning" id="warningAlert"></div>
+
+                <form id="loginForm">
+                    <!-- User Role Selection -->
+                    <label class="form-label">
+                        <i class="fas fa-user-tag"></i> Login As
+                    </label>
+                    <div class="user-role-selector">
+                        <div class="role-option active" data-role="patient">
+                            <i class="fas fa-user-injured"></i>
+                            <span>Patient</span>
+                        </div>
+                        <div class="role-option" data-role="doctor">
+                            <i class="fas fa-user-md"></i>
+                            <span>Doctor</span>
+                        </div>
+                        <div class="role-option" data-role="staff">
+                            <i class="fas fa-users"></i>
+                            <span>Staff</span>
+                        </div>
+                        <div class="role-option" data-role="admin">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Admin</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="userRole" value="patient">
+
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input 
+                            type="email" 
+                            class="form-control" 
+                            id="email" 
+                            placeholder="Enter your email"
+                            required
+                        >
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <div style="position: relative;">
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                placeholder="Enter your password"
+                                required
+                            >
+                            <span class="password-toggle" onclick="togglePassword()">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Remember & Forgot -->
+                    <div class="remember-forgot">
+                        <label class="form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <span class="form-check-label">Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">
+                            Forgot Password?
+                        </a>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="divider">Or continue with</div>
+
+                <!-- Social Login Options -->
+                <div class="social-login">
+                    <button type="button" class="social-btn" onclick="handleSocialLogin('google')">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button type="button" class="social-btn" onclick="handleSocialLogin('microsoft')">
+                        <i class="fab fa-microsoft"></i> Microsoft
+                    </button>
+                </div>
+
+                <!-- Sign Up Link -->
+                <div class="signup-link">
+                    Don't have an account? <a href="#" onclick="handleSignUp(event)">Create Account</a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <a href="#">Security & Privacy</a> | 
+                <a href="#">Help & Support</a> | 
+                <a href="#">Contact Us</a>
+                <div style="margin-top: 10px;">
+                    &copy; 2026 Smart Clinic Management System. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedRole = 'patient';
+
+        // Role Selection Handler
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.role-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                selectedRole = this.getAttribute('data-role');
+                document.getElementById('userRole').value = selectedRole;
+                showMessage('Role changed to: ' + selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1), 'warning');
+            });
+        });
+
+        // Password Toggle
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Form Validation & Login Handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Password validation
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters long', 'error');
+                return;
+            }
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading-spinner"></span> Signing In...';
+
+            // Simulate API call (Replace with your Java backend URL)
+            setTimeout(() => {
+                // Success simulation
+                if (email.length > 0 && password.length > 0) {
+                    showMessage('Login successful as ' + selectedRole + '!', 'success');
+                    console.log('Login Details:', {
+                        email: email,
+                        role: selectedRole,
+                        rememberMe: document.getElementById('rememberMe').checked,
+                        timestamp: new Date().toLocaleString()
+                    });
+                    
+                    // Reset form
+                    setTimeout(() => {
+                        document.getElementById('loginForm').reset();
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                        // Redirect to dashboard (change URL as needed)
+                        // window.location.href = '/dashboard';
+                    }, 2000);
+                } else {
+                    showMessage('Please fill in all fields', 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                }
+            }, 1500);
+        });
+
+        // Message Display Function
+        function showMessage(message, type) {
+            const alerts = document.querySelectorAll('.alert-message');
+            alerts.forEach(alert => alert.style.display = 'none');
+
+            let alertElement;
+            if (type === 'success') {
+                alertElement = document.getElementById('successAlert');
+                alertElement.innerHTML = '<i class="fas fa-check-circle"></i> ' + message;
+            } else if (type === 'error') {
+                alertElement = document.getElementById('errorAlert');
+                alertElement.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + message;
+            } else if (type === 'warning') {
+                alertElement = document.getElementById('warningAlert');
+                alertElement.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
+            }
+
+            if (alertElement) {
+                alertElement.style.display = 'block';
+                if (type === 'success') {
+                    setTimeout(() => alertElement.style.display = 'none', 3000);
+                }
+            }
+        }
+
+        // Forgot Password Handler
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            if (email) {
+                showMessage('Password reset link sent to ' + email, 'success');
+            } else {
+                showMessage('Please enter your email address first', 'warning');
+            }
+        }
+
+        // Social Login Handler
+        function handleSocialLogin(provider) {
+            showMessage('Connecting with ' + provider.charAt(0).toUpperCase() + provider.slice(1) + '...', 'warning');
+            // Add your social login logic here
+        }
+
+        // Sign Up Handler
+        function handleSignUp(e) {
+            e.preventDefault();
+            showMessage('Redirecting to registration page...', 'warning');
+            // window.location.href = '/register';
+        }
+
+        // Enter key submission
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

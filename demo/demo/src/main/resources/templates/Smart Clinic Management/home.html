@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Clinic Management System - Dashboard</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-bg: #f8fafc;
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            --border-radius: 16px;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--card-shadow);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar .logo {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .sidebar .logo h3 {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .nav-link {
+            padding: 1rem 1.5rem;
+            color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            margin: 0.25rem 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-grid {
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .patients .stat-icon { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .doctors .stat-icon { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; }
+        .appointments .stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .revenue .stat-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .quick-actions {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 1.5rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            height: 120px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-primary { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; }
+        .action-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .action-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .action-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+
+        .recent-patients {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .table th {
+            border: none;
+            font-weight: 600;
+            color: var(--dark-color);
+            padding-bottom: 1rem;
+        }
+
+        .table td {
+            border-color: rgba(0,0,0,0.05);
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-active { background: rgba(16,185,129,0.1); color: #10b981; }
+        .status-pending { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .status-completed { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h3><i class="fas fa-clinic-medical me-2"></i>Smart Clinic</h3>
+            <small class="text-muted">Management System</small>
+        </div>
+        <nav class="p-3">
+            <a href="#" class="nav-link active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span>Patients</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-user-md"></i>
+                <span>Doctors</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-file-medical"></i>
+                <span>Prescriptions</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 class="h3 mb-1 fw-bold">Dashboard Overview</h1>
+                <p class="text-muted mb-0">Welcome back, Dr. Admin! Here's what's happening in your clinic today.</p>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Dr. Admin</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="login.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary mobile-menu-toggle d-lg-none" id="mobileToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row stats-grid mb-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card patients fade-in-up">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">Total Patients</div>
+                    <small class="text-success fw-bold">+12% from last month</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card doctors fade-in-up">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-number">28</div>
+                    <div class="stat-label">Active Doctors</div>
+                    <small class="text-success fw-bold">+2 new this week</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card appointments fade-in-up">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-number">156</div>
+                    <div class="stat-label">Today's Appointments</div>
+                    <small class="text-warning fw-bold">23 pending</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card revenue fade-in-up">
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-number">₹2.45L</div>
+                    <div class="stat-label">Monthly Revenue</div>
+                    <small class="text-success fw-bold">+18% growth</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Quick Actions -->
+            <div class="col-lg-8">
+                <div class="quick-actions">
+                    <h5 class="mb-4 fw-bold"><i class="fas fa-bolt text-primary me-2"></i>Quick Actions</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <a href="#" class="action-btn action-primary">
+                                <i class="fas fa-plus fa-2x"></i>
+                                <span>New Patient</span>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <a href="#" class="action-btn action-success">
+                                <i class="fas fa-calendar-plus fa-2x"></i>
+                                <span>Book Appointment</span>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <a href="#" class="action-btn action-warning">
+                                <i class="fas fa-stethoscope fa-2x"></i>
+                                <span>Today's Schedule</span>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <a href="#" class="action-btn action-danger">
+                                <i class="fas fa-file-prescription fa-2x"></i>
+                                <span>New Prescription</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Patients -->
+            <div class="col-lg-4">
+                <div class="recent-patients h-100">
+                    <div class="p-4 pb-3">
+                        <h5 class="mb-3 fw-bold"><i class="fas fa-user-clock text-primary me-2"></i>Recent Patients</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    RK
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">Rahul Kumar</div>
+                                                    <small class="text-muted">#PAT001</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="status-badge status-active">Active</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    SP
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">Priya Sharma</div>
+                                                    <small class="text-muted">#PAT002</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="status-badge status-pending">Pending</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="avatar bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    AM
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">Amit Mishra</div>
+                                                    <small class="text-muted">#PAT003</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="status-badge status-completed">Completed</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="#" class="btn btn-outline-primary w-100 mt-3">View All Patients</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        });
+
+        // Sidebar collapse (desktop)
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.nav-link.active').classList.remove('active');
+                this.classList.add('active');
+            });
+        });
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0.1s';
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Simulate real-time data updates
+        function updateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach((stat, index) => {
+                const current = parseInt(stat.textContent.replace(/[^\d]/g, ''));
+                const increment = Math.floor(Math.random() * 5) + 1;
+                stat.textContent = (current + increment).toLocaleString();
+            });
+        }
+
+        // Update stats every 10 seconds
+        setInterval(updateStats, 10000);
+
+        // Chart placeholder (connect to Chart.js or ApexCharts for real charts)
+        console.log('Dashboard loaded successfully. Connect to your Java backend endpoints for real data.');
+    </script>
+</body>
+</html>
