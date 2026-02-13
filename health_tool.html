@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Risk Assessment - Smart Clinic</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        body {
+            background-color: #fff5e6;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, #FF9933 0%, #FF5722 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(255, 153, 51, 0.3);
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            background: white;
+            transition: transform 0.3s;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .btn-calculate {
+            background-color: #138808;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(19, 136, 8, 0.3);
+        }
+
+        .btn-calculate:hover {
+            background-color: #0b5705;
+            transform: scale(1.02);
+        }
+
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .bmi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #FF5722;
+        }
+
+        .tips-list li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 4px solid #138808;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-section text-center">
+        <h1><i class="fas fa-heartbeat me-2"></i>Health Risk Assessment</h1>
+        <p class="lead">Check your vitals and get personalized wellness tips instantly.</p>
+        <a href="/index.html" class="btn btn-outline-light btn-sm rounded-pill mt-2">Back to Home</a>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row">
+            <!-- Input Form -->
+            <div class="col-md-6 mb-4">
+                <div class="card p-4 h-100">
+                    <h4 class="mb-4 text-primary"><i class="fas fa-user-edit me-2"></i>Enter Your Details</h4>
+                    <form id="healthForm">
+                        <div class="mb-3">
+                            <label class="form-label">Age: <span id="ageVal">25</span> years</label>
+                            <input type="range" class="form-range" id="age" min="18" max="80" value="25"
+                                oninput="document.getElementById('ageVal').innerText = this.value">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Weight (kg)</label>
+                                <input type="number" class="form-control" id="weight" placeholder="e.g. 70" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Height (cm)</label>
+                                <input type="number" class="form-control" id="height" placeholder="e.g. 175" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Blood Pressure</label>
+                            <select class="form-select" id="bp">
+                                <option value="Normal">Normal (120/80)</option>
+                                <option value="Low">Low (< 90/60)</option>
+                                <option value="Elevated">Elevated (120-129/< 80)</option>
+                                <option value="High">High (Adjusted)</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="smoking">
+                                <label class="form-check-label fw-bold">🚬 Smoking?</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="diabetes">
+                                <label class="form-check-label fw-bold">🩸 Diabetes History?</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-calculate" onclick="calculateRisk()">
+                            Calculate Health Score <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-6 mb-4">
+                <div class="card p-4 h-100" id="resultCard" style="display:none; transition: all 0.5s ease;">
+                    <h4 class="mb-3 text-center text-success">Your Health Report</h4>
+
+                    <div class="d-flex justify-content-center mb-3">
+                        <div style="width: 250px; height: 150px;">
+                            <canvas id="riskGauge"></canvas>
+                        </div>
+                    </div>
+                    <div class="text-center mt-[-30px]">
+                        <h5>Risk Score: <span id="riskScoreVal">0</span>/100</h5>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-6 text-center border-end">
+                            <small class="text-muted">Your BMI</small>
+                            <div class="bmi-value" id="bmiDisplay">0.0</div>
+                            <span class="badge bg-secondary" id="bmiCategory">Normal</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted fw-bold">Wellness Tips:</small>
+                            <ul class="tips-list list-unstyled small mt-2" id="tipsList">
+                                <li>Drink more water.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button class="btn btn-outline-primary rounded-pill" onclick="downloadPDF()">
+                            <i class="fas fa-file-pdf me-2"></i>Download Report
+                        </button>
+                        <a href="/patient/book-appointment.html?specialty=NUTRITION"
+                            class="btn btn-warning text-white rounded-pill">
+                            <i class="fas fa-user-md me-2"></i>Book Nutritionist
+                        </a>
+                    </div>
+                </div>
+                <!-- Placeholder for before calculation -->
+                <div class="card p-5 h-100 text-center d-flex align-items-center justify-content-center"
+                    id="placeholderCard">
+                    <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">Enter details to see your health analysis</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gaugeChart;
+
+        function calculateRisk() {
+            const age = parseInt(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const bp = document.getElementById('bp').value;
+            const smoking = document.getElementById('smoking').checked;
+            const diabetes = document.getElementById('diabetes').checked;
+
+            if (!weight || !height) {
+                alert("Please enter Weight and Height!");
+                return;
+            }
+
+            // BMI Calc
+            const heightM = height / 100;
+            const bmi = (weight / (heightM * heightM)).toFixed(1);
+            let bmiCat = "Normal";
+            if (bmi < 18.5) bmiCat = "Underweight";
+            else if (bmi >= 25 && bmi < 30) bmiCat = "Overweight";
+            else if (bmi >= 30) bmiCat = "Obese";
+
+            // Risk Score Calc (Simple Algorithm)
+            let baseScore = 10;
+            if (bmi >= 25) baseScore += 20;
+            if (bmi >= 30) baseScore += 30;
+            if (age > 45) baseScore += 10;
+            if (bp === 'High' || bp === 'Elevated') baseScore += 15;
+            if (smoking) baseScore += 25;
+            if (diabetes) baseScore += 20;
+
+            let score = Math.min(baseScore, 100);
+
+            // Update UI
+            document.getElementById('resultCard').style.display = 'block';
+            document.getElementById('placeholderCard').style.display = 'none';
+            document.getElementById('bmiDisplay').innerText = bmi;
+            document.getElementById('bmiCategory').innerText = bmiCat;
+            document.getElementById('riskScoreVal').innerText = score;
+
+            // Define tips
+            let tips = [];
+            if (bmi > 25) tips.push("Aim for 30 mins of cardio daily.");
+            if (smoking) tips.push("Consider a smoking cessation program.");
+            if (bp !== 'Normal') tips.push("Reduce sodium intake.");
+            if (tips.length === 0) tips.push("Keep up the great work! maintain a balanced diet.");
+
+            const tipsList = document.getElementById('tipsList');
+            tipsList.innerHTML = "";
+            tips.forEach(t => {
+                let li = document.createElement("li");
+                li.innerText = t;
+                tipsList.appendChild(li);
+            });
+
+            // Update Chart
+            updateGauge(score);
+
+            // Save to Backend
+            saveData(age, weight, height, bp, smoking, diabetes, bmi, score);
+        }
+
+        function updateGauge(score) {
+            const ctx = document.getElementById('riskGauge').getContext('2d');
+
+            // Determine Color
+            let color = '#4caf50'; // Green
+            if (score > 30) color = '#ff9800'; // Yellow
+            if (score > 70) color = '#f44336'; // Red
+
+            if (gaugeChart) gaugeChart.destroy();
+
+            gaugeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Risk', 'Safe'],
+                    datasets: [{
+                        data: [score, 100 - score],
+                        backgroundColor: [color, '#e0e0e0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    circumference: 180,
+                    rotation: -90,
+                    cutout: '75%',
+                    plugins: {
+                        tooltip: { enabled: false },
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function saveData(age, weight, height, bp, smoking, diabetes, bmi, riskScore) {
+            fetch('/api/health-save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ age, weight, height, bp, smoking, diabetesHistory: diabetes, bmi, riskScore })
+            }).then(res => console.log("Saved"));
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(20);
+            doc.text("Health Risk Assessment Report", 20, 20);
+
+            doc.setFontSize(12);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
+            doc.text(`BMI: ${document.getElementById('bmiDisplay').innerText}`, 20, 40);
+            doc.text(`Risk Score: ${document.getElementById('riskScoreVal').innerText}/100`, 20, 50);
+
+            doc.text("Wellness Tips:", 20, 70);
+            const tips = document.getElementById('tipsList').getElementsByTagName('li');
+            let y = 80;
+            for (let li of tips) {
+                doc.text(`- ${li.innerText}`, 25, y);
+                y += 10;
+            }
+
+            doc.save("Health_Report.pdf");
+        }
+    </script>
+</body>
+
+</html>
